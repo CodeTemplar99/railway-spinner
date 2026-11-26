@@ -27,13 +27,14 @@ function authHeaders() {
 
 async function gql(query, variables = {}) {
   const controller = new AbortController();
+  const headers = { 'Content-Type': 'application/json', ...authHeaders() };
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
   let res;
   try {
     res = await fetch(ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      headers,
       body: JSON.stringify({ query, variables }),
       signal: controller.signal,
     });
