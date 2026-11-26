@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Railway Spinner</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚂</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <h1>Railway Spinner</h1>
+    </div>
+    <div class="context">
+      <span class="project" id="project-name">Loading project…</span>
+      <label class="env">
+        <span class="sr-only">Environment</span>
+        <select id="env-select" disabled></select>
+      </label>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="launch" aria-labelledby="launch-title">
+      <h2 id="launch-title">Spin up a container</h2>
+      <p class="hint">Creates a new service in this project from a public Docker image and deploys it.</p>
+
+      <form id="launch-form" novalidate>
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" required maxlength="32" autocomplete="off" spellcheck="false" placeholder="hello-nginx" />
+          <small>Lowercase letters, numbers and hyphens.</small>
+        </div>
+
+        <div class="field">
+          <label for="image">Image</label>
+          <input id="image" name="image" class="mono" required autocomplete="off" spellcheck="false" placeholder="nginx:alpine" />
+          <div class="presets" role="group" aria-label="Common images">
+            <button type="button" data-image="nginx:alpine" data-port="80">nginx</button>
+            <button type="button" data-image="traefik/whoami" data-port="80">whoami</button>
+            <button type="button" data-image="httpd:alpine" data-port="80">httpd</button>
+            <button type="button" data-image="redis:7-alpine" data-port="">redis</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="port">Public port <span class="optional">optional</span></label>
+          <input id="port" name="port" type="number" min="1" max="65535" inputmode="numeric" placeholder="80" />
+          <small>Generates a railway.app URL routed to this port.</small>
+        </div>
+
+        <fieldset class="field vars">
+          <legend>Variables <span class="optional">optional</span></legend>
+          <div id="var-rows"></div>
+          <button type="button" class="link" id="add-var">Add variable</button>
+        </fieldset>
+
+        <p class="form-error" id="form-error" role="alert" hidden></p>
+        <button type="submit" class="primary" id="launch-btn">Spin up</button>
+      </form>
+    </section>
+
+    <section class="rack" aria-labelledby="rack-title">
+      <div class="rack-head">
+        <h2 id="rack-title">Containers</h2>
+        <span class="count" id="count"></span>
+        <button type="button" class="link refresh" id="refresh">Refresh</button>
+      </div>
+      <ul class="rows" id="rows" aria-live="polite"></ul>
+      <div class="empty" id="empty" hidden>
+        <p>No containers in this environment yet.</p>
+        <p class="hint">Pick an image on the left and spin one up.</p>
+      </div>
+    </section>
+
+    <section class="log" aria-labelledby="log-title">
+      <h2 id="log-title">Activity</h2>
+      <ol id="log"></ol>
+    </section>
+  </main>
+
+  <dialog id="gate">
+    <form method="dialog" id="gate-form">
+      <h2>Enter the app password</h2>
+      <p class="hint">This control panel can create containers on a Railway account, so it’s locked.</p>
+      <input id="gate-input" type="password" autocomplete="current-password" required />
+      <p class="form-error" id="gate-error" hidden>That password didn’t work.</p>
+      <button class="primary" type="submit">Unlock</button>
+    </form>
+  </dialog>
+
+  <template id="row-tpl">
+    <li class="row">
+      <button type="button" class="switch" role="switch" aria-checked="false">
+        <span class="track"><span class="thumb"></span></span>
+      </button>
+      <div class="meta">
+        <div class="line1">
+          <span class="name"></span>
+          <span class="status"></span>
+        </div>
+        <div class="line2">
+          <code class="image"></code>
+          <a class="url" target="_blank" rel="noopener"></a>
+        </div>
+      </div>
+      <button type="button" class="link danger delete">Delete</button>
+    </li>
+  </template>
+
+  <script src="/app.js"></script>
+</body>
+</html>
